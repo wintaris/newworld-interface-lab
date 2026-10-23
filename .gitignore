@@ -1,0 +1,5 @@
+node_modules/
+qa/
+__pycache__/
+*.pyc
+newworld-interface-layout*.json

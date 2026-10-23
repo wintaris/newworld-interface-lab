@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>NewWorld · Редактор интерфейсов</title>
+  <link rel="icon" href="assets/lab.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-icon">N<span>W</span></span><span>INTERFACE LAB<small>NEW WORLD / МАСТЕРСКАЯ ИНТЕРФЕЙСОВ</small></span></a>
+    <span class="draft-badge">ИЗ ИГРЫ</span>
+    <div class="top-actions">
+      <span id="saveStatus" class="save-status" role="status">Локальное сохранение</span>
+      <button id="undo" title="Отменить · Ctrl+Z">↶</button><button id="redo" title="Повторить · Ctrl+Shift+Z">↷</button>
+      <button id="import">Импорт</button><button id="linkFile" title="Автоматически записывать макет в выбранный JSON">Связать JSON</button>
+      <button id="export" class="primary">Скачать макет ↓</button>
+      <button id="help" title="Как пользоваться">?</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="sidebar left">
+      <div class="tabs"><button data-tab="screens" class="active">Экраны <span id="screenCount"></span></button><button data-tab="layers">Слои</button></div>
+      <section id="screensTab" class="tab-content"><div class="search-wrap"><input id="screenSearch" type="search" placeholder="Найти интерфейс…" aria-label="Найти интерфейс"></div><nav id="screenList" aria-label="Интерфейсы"></nav></section>
+      <section id="layersTab" class="tab-content" hidden><div class="layer-tools"><button id="addNode">＋ Элемент</button><button id="duplicate" title="Дублировать · Ctrl+D">⧉</button><button id="delete" title="Удалить · Delete">×</button></div><div id="layerTree"></div><div class="sidebar-note">Клик — выбрать · Shift — несколько<br>Alt + клик на макете — родитель</div></section>
+      <footer class="sidebar-foot"><span class="status-dot"></span><span id="coverageText">Все игровые окна</span><button id="themeButton">Тема</button></footer>
+    </aside>
+    <main class="main">
+      <div class="canvas-toolbar">
+        <div><strong id="screenName"></strong><span id="screenStyle" class="screen-style"></span></div>
+        <div class="canvas-controls">
+          <label class="compact-toggle"><input type="checkbox" id="linkedEdits" checked>Связанные</label>
+          <label class="compact-toggle" id="gameScaleLabel">Масштаб игры <input id="gameScale" type="number" min="20" max="150" step="5" value="100" style="width:55px">%</label>
+          <select id="resolution" aria-label="Размер игрового экрана"><option value="1920,1080">1920 × 1080</option><option value="1280,800">1280 × 800</option><option value="1366,768">1366 × 768</option><option value="2560,1440">2560 × 1440</option><option value="3440,1440">3440 × 1440</option><option value="custom">Свой размер…</option></select>
+          <select id="background" aria-label="Фон"><option value="world">Карта</option><option value="dark">Тёмный</option><option value="checker">Шахматный</option></select>
+          <label class="compact-toggle"><input id="grid" type="checkbox"> Сетка</label>
+          <label class="compact-toggle"><input id="snap" type="checkbox" checked> Привязка</label>
+          <input id="gridStep" type="number" min="1" max="100" value="8" aria-label="Шаг сетки" title="Шаг сетки, px">
+          <button id="zoomOut" aria-label="Уменьшить">−</button><button id="fit" title="Вписать окно · для HUD весь экран">Вписать</button><button id="zoomIn" aria-label="Увеличить">＋</button><span id="zoomLabel">50%</span>
+        </div>
+      </div>
+      <div class="stage-scroll" id="stageScroll" tabindex="0" aria-label="Макет интерфейса">
+        <div id="stageSpace"><div id="viewport"><div id="scene"></div><div id="gridOverlay"></div><div id="selectionOverlay"></div></div></div>
+      </div>
+      <div class="canvas-footer"><span id="screenNote">Данные на макетах — пример</span><span id="geometryStatus">Выбери элемент на макете или в слоях</span></div>
+    </main>
+    <aside class="sidebar inspector"><div class="inspector-title"><strong id="inspectorName">Свойства</strong><button id="resetNode" title="Вернуть исходные свойства выбранного элемента">↺</button></div><div id="properties"></div></aside>
+  </div>
+  <dialog id="helpDialog"><form method="dialog"><button class="dialog-close">×</button><span class="eyebrow">ТЕКУЩИЕ ИНТЕРФЕЙСЫ ИЗ ИГРЫ</span><h1>Настраивай целыми блоками.</h1><p>Каталог использует текущие игровые GUI, изображения и атласы шрифтов. HUD и инвентарь учитывают игровой масштаб. Значения предметов, персонажей и заданий показаны для примера.</p><div class="help-grid"><div><h3>Блоки и детали</h3><p>Клик выбирает блок целиком. Ctrl + клик — отдельную деталь, Alt + клик — родителя, Shift + клик — несколько элементов. Перетаскивай блок или меняй размер маркерами.</p><p>При включённом «Связанные» одинаковые ячейки меняются вместе: размер, шрифт, рамка и расположение деталей. Картинки и тексты предметов сохраняются индивидуальными.</p><p>Стрелки — сдвиг на 1 px, Shift — на 10 px. Ctrl+D — копия; Delete — удалить; Ctrl+Z — отмена.</p></div><div><h3>Родители и шаблоны</h3><p>В «Связанных блоках» выбери масштабирование содержимого или изменение только панели. «Родитель растёт с содержимым» расширяет панель при необходимости; ряд, колонка и сетка переставляют соседей автоматически.</p><p>Общее имя шаблона связывает экземпляры. Роль связывает одинаковые детали внутри них. Экземпляр можно отвязать. В слое родителя можно менять весь блок сразу.</p><p>«Масштаб игры» меняет реальный размер интерфейса, «Вписать» — только приближение редактора. Для другого шрифта выбери отрисовку «Шрифт браузера».</p></div></div><h3>Сохранить и передать</h3><p>Правки сохраняются в этом браузере. «Скачать макет» создаёт JSON для резервной копии и переноса в игру; «Импорт» восстанавливает его. «Связать JSON» записывает следующие правки в выбранный файл. После переоткрытия страницы подключи файл снова.</p><p class="muted">Редактор не изменяет запущенную игру. Содержимое и анимации не исполняют игровые скрипты. Старые приближённые макеты хранятся отдельно и не подменяют синхронизированную основу.</p><button class="primary">Начать настройку</button></form></dialog>
+  <dialog id="addDialog"><form id="addForm"><button type="button" class="dialog-close" data-close="addDialog">×</button><h2>Новый элемент</h2><label>Тип<select name="kind"><option value="panel">Панель / рамка</option><option value="group">Группа</option><option value="text">Текст</option><option value="button">Кнопка</option><option value="slot">Ячейка</option><option value="image">Картинка</option><option value="input">Поле ввода</option><option value="checkbox">Флажок</option><option value="progress">Полоска / прогресс</option></select></label><label>Название<input name="name" required value="Новый элемент" maxlength="120"></label><label>Внутри<select name="parent" id="newParent"></select></label><button class="primary">Добавить</button></form></dialog>
+  <dialog id="themeDialog"><form method="dialog"><button class="dialog-close">×</button><h2>Общая тема</h2><p class="muted">Цвета применяются к элементам без собственного переопределения. Индивидуальные цвета можно сбросить в свойствах.</p><div id="themeFields"></div><button type="button" id="applyFonts">Применить шрифт ко всем текстам</button><button class="primary">Готово</button></form></dialog>
+  <dialog id="resetDialog"><form method="dialog"><button class="dialog-close">×</button><h2>Сбросить этот экран?</h2><p>Правки текущего экрана будут заменены исходным макетом. Действие можно отменить.</p><button value="cancel">Отмена</button><button value="reset" class="danger">Сбросить экран</button></form></dialog>
+  <div id="toast" role="status" hidden></div>
+  <input id="fileInput" type="file" accept=".json,application/json" hidden>
+  <script src="catalog.js"></script><script src="model.js"></script><script src="game_text.js"></script><script src="editor.js"></script>
+</body>
+</html>
