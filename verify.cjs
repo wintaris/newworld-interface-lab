@@ -105,8 +105,10 @@ const previewBoxes=M.resolve(previewInv,{w:1920,h:1080});
 for(let i=0;i<8;i++) {
   const id='BagItem-'+i,cell=previewBoxes.get(id),image=previewBoxes.get(id+'-image'),ammo=previewBoxes.get(id+'-ammo'),wear=previewBoxes.get(id+'-wear');
   assert.ok(ammo.y+ammo.h<=image.y,'патроны выше картинки');
-  assert.ok(image.y+image.h<=wear.y,'износ ниже картинки');
-  assert.ok(wear.y+wear.h<=cell.y+cell.h,'износ помещается в ячейку');
+  assert.ok(wear.y+wear.h<=image.y,'износ выше картинки');
+  assert.ok(ammo.x+ammo.w<=wear.x,'подписи не перекрываются');
+  assert.ok(image.y+image.h<=cell.y+cell.h,'картинка помещается в ячейку');
+  assert.ok(image.h>=44*1.5,'картинка заметно крупнее прежних 44 px');
   if(i<7)assert.equal(previewBoxes.get('BagItem-'+(i+1)).y-cell.y-cell.h,8,'зазор между предметами');
 }
 const itemLabels=previewInv.nodes.filter(n=>n.partKey==='ammo'||n.partKey==='wear');

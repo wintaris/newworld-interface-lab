@@ -5,7 +5,7 @@
   const nodes = new Map(inventory.nodes.map(n => [n.id, n]));
   const put = (id, properties) => Object.assign(nodes.get(id), properties);
 
-  inventory.previewRevision = 'inventory-compact-1';
+  inventory.previewRevision = 'inventory-large-items-2';
   inventory.style = 'preview';
   inventory.note = 'Стенд: компоновка по референсу, свободные ячейки и единый шрифт предметов. Изменения подготовлены для просмотра.';
   Object.assign(inventory.runtimeScale, {widthLimit: 766, heightLimit: 848});
@@ -18,12 +18,12 @@
   put('InvItems', {x: 12, y: 12, w: 156, h: 824, gap: 8});
   put('EquipmentColumn', {x: 536, y: 0, w: 230, h: 758, gap: 12});
 
-  // Счётчик, изображение и износ занимают отдельные строки внутри ячейки.
+  // Подписи делят верхнюю строку, оставляя больше места для изображения.
   function item(id, width, height) {
     put(id, {w: width, h: height});
-    put(id + '-image', {x: 8, y: 24, w: width - 16, h: height - 50});
-    put(id + '-ammo', {x: 4, y: 0, w: width - 8, h: 22, fontSize: 20});
-    put(id + '-wear', {x: 4, y: height - 22, w: width - 8, h: 22, fontSize: 20});
+    put(id + '-image', {x: 4, y: 24, w: width - 8, h: height - 26});
+    put(id + '-ammo', {x: 4, y: 0, w: width / 2 - 8, h: 22, fontSize: 20});
+    put(id + '-wear', {x: width / 2 + 4, y: 0, w: width / 2 - 8, h: 22, fontSize: 20});
   }
   for (let i = 0; i < 8; i++) {
     put('BagItem-' + i, {x: 0, y: i * 102});
