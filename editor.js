@@ -43,7 +43,19 @@
   }
   try {
     const saved = localStorage.getItem(STORAGE);
-    if (saved) { data = M.validate(JSON.parse(saved), catalog); currentId = data.editorView.screen; viewport = {w: data.editorView.width, h: data.editorView.height}; }
+    if (saved) {
+      const previous = JSON.parse(saved);
+      data = M.validate(previous, catalog);
+      const revised = catalog.screens.filter(s => s.previewRevision && previous.screens.find(old => old.id === s.id)?.previewRevision !== s.previewRevision);
+      if (revised.length) {
+        const backupKey = STORAGE + '-before-' + revised.map(s => s.previewRevision).join('-');
+        if (!localStorage.getItem(backupKey)) localStorage.setItem(backupKey, saved);
+        for (const s of revised) data.screens[data.screens.findIndex(old => old.id === s.id)] = M.clone(s);
+        data.editorView.screen = 'Inventory';
+        setTimeout(() => { toast('Инвентарь обновлён для просмотра. Прежний макет сохранён в резервной копии браузера.'); save(); }, 400);
+      }
+      currentId = data.editorView.screen; viewport = {w: data.editorView.width, h: data.editorView.height};
+    }
   } catch (error) { setTimeout(() => toast('Сохранённый макет не загружен: ' + error.message), 400); }
 
   function showTab(tab) {
@@ -171,7 +183,7 @@
     area.scrollTop = top + (target.y + target.h / 2) * zoom - area.clientHeight / 2;
   }
   function refresh() {
-    $('screenName').textContent = screen().name; $('screenStyle').textContent = screen().style === 'redesigned' ? 'Новый макет' : 'Макет текущего интерфейса';
+    $('screenName').textContent = screen().name; $('screenStyle').textContent = screen().style === 'preview' ? 'Макет для просмотра' : screen().style === 'redesigned' ? 'Новый макет' : 'Макет текущего интерфейса';
     $('screenNote').textContent = (screen().note || 'Данные примера · изменения пока не применяются к игре');
     $('gameScaleLabel').hidden=!screen().runtimeScale;
     $('gameScale').value=screen().runtimeScale?.percent||100;
